@@ -20,7 +20,7 @@ import ConfigParser
 # Don't forget to create an app within both Netatmo and LaMetric (credentials are in the file config.ini)
 
 # Load the config.ini file
-path = os.path.dirname(__file__)
+path = os.path.dirname(os.path.abspath(__file__))
 config = ConfigParser.ConfigParser()
 config.read(path + '/config.ini')
 
