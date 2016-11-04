@@ -14,7 +14,7 @@ import ConfigParser
 # Netatmo / LaMetric Proxy
 # Author : Stanislav Likavcan, likavcan@gmail.com
 
-# A simple client which turns LaMetric into Netamo display. This client calls Netatmo API and updates LaMetric display 
+# A simple client which turns LaMetric into Netamo display. This client calls Netatmo API and updates LaMetric display
 # Easiest way to keep the LaMetric display updated is via cron task:
 # */10 * * * * /home/lametric/updateLaMetric.py
 # Don't forget to create an app within both Netatmo and LaMetric (credentials are in the file config.ini)
@@ -25,6 +25,8 @@ config = ConfigParser.ConfigParser()
 config.read(path + '/config.ini')
 
 # Configure logging
+# import code; code.interact(local=dict(globals(), **locals()))
+
 loglevel = config.get('general','loglevel')
 numeric_level = getattr(logging, loglevel.upper(), None)
 logging.basicConfig(format='%(levelname)s: %(message)s',level=numeric_level)
@@ -97,6 +99,7 @@ measure = devList.getMeasure(station_id, '1hour', 'Temperature', module_id, date
 hist_temp = [int(round(v[0],0)) for v in measure['body'][0]['value']]
 
 # Retrieve current sensor data
+indoor = {}
 outdoor = {}
 
 indoorTemp = theData[station_name]['Temperature']
@@ -113,6 +116,13 @@ outdoor['pressure']    = str(theData[station_name]['Pressure'])+'mb'
 outdoor['trend']       = str(theData[station_name]['pressure_trend'])
 logging.debug('Outdoor metrics: %s', outdoor)
 
+indoor['temperature'] = str(indoorTemp) + "°" + temp_units
+indoor['humidity']    = str(theData[station_name]['Humidity'])+'%'
+# indoor['pressure']    = str(theData[station_name]['Pressure'])+'mb'
+# indoor['trend']       = str(theData[station_name]['pressure_trend'])
+logging.debug('Indoor metrics: %s', indoor)
+
+
 # Icons definition
 icon = {'temp': 'i2355', 'tempC': 'i2056', 'humi': 'i863', 'stable': 'i401', 'up': 'i120', 'down': 'i124', 'sunrise': 'a485', 'sunset': 'a486'}
 
@@ -120,11 +130,15 @@ time_format = config.get('general','time_format')
 
 # Finally, post the data to LaMetric
 lametric = lametric.Setup()
-lametric.addTextFrame(icon['temp'],outdoor['temperature'])
-lametric.addSparklineFrame(hist_temp)
-lametric.addTextFrame(icon['humi'],outdoor['humidity'])
-lametric.addTextFrame(icon[outdoor['trend']],outdoor['pressure'])
-lametric.addTextFrame(icon['sunrise'],rise_time.strftime(time_format))
-lametric.addTextFrame(icon['sunset'],set_time.strftime(time_format))
+# lametric.addTextFrame(icon['temp'],outdoor['temperature'])
+# lametric.addSparklineFrame(hist_temp)
+# lametric.addTextFrame(icon['humi'],outdoor['humidity'])
+# lametric.addTextFrame(icon[outdoor['trend']],outdoor['pressure'])
+# lametric.addTextFrame(icon['sunrise'],rise_time.strftime(time_format))
+# lametric.addTextFrame(icon['sunset'],set_time.strftime(time_format))
+
+lametric.addTextFrame(icon['temp'],indoor['temperature'])
+lametric.addTextFrame(icon['humi'],indoor['humidity'])
+
 lametric.push(app_id, access_token)
 exit()
