@@ -118,13 +118,14 @@ logging.debug('Outdoor metrics: %s', outdoor)
 
 indoor['temperature'] = str(indoorTemp) + "°" + temp_units
 indoor['humidity']    = str(theData[station_name]['Humidity'])+'%'
+indoor['co2']    = str(theData[station_name]['CO2'])+'ppm'
 # indoor['pressure']    = str(theData[station_name]['Pressure'])+'mb'
 # indoor['trend']       = str(theData[station_name]['pressure_trend'])
 logging.debug('Indoor metrics: %s', indoor)
 
 
 # Icons definition
-icon = {'temp': 'i2355', 'tempC': 'i2056', 'humi': 'i863', 'stable': 'i401', 'up': 'i120', 'down': 'i124', 'sunrise': 'a485', 'sunset': 'a486'}
+icon = {'temp': 'i2355', 'tempC': 'i2056', 'humi': 'i863', 'stable': 'i401', 'up': 'i120', 'down': 'i124', 'sunrise': 'a485', 'sunset': 'a486', 'co2': 'i2824'}
 
 time_format = config.get('general','time_format')
 
@@ -137,8 +138,9 @@ lametric = lametric.Setup()
 # lametric.addTextFrame(icon['sunrise'],rise_time.strftime(time_format))
 # lametric.addTextFrame(icon['sunset'],set_time.strftime(time_format))
 
-lametric.addTextFrame(icon['temp'],indoor['temperature'])
+lametric.addTextFrame(icon['tempC'],indoor['temperature'])
 lametric.addTextFrame(icon['humi'],indoor['humidity'])
+lametric.addTextFrame(icon['co2'],indoor['co2'])
 
 lametric.push(app_id, access_token)
 exit()
